@@ -579,8 +579,8 @@
     <div class="card">
       <h3>生图提示词增强 <span class="tag">全局设置 · 立即生效</span></h3>
       <div class="hint">
-        默认会在<b>带参考图</b>的生图/编辑提示词末尾自动追加「去除参考图文字、水印、签名、Logo」要求。
-        关闭后服务不再注入任何额外要求，提示词完全由调用方通过 API 传入。
+        默认<b>关闭</b>：带参考图的生图/编辑提示词不会自动追加任何要求，完全按调用方通过 API 传入的内容发送。
+        开启后在提示词末尾自动追加「去除参考图文字、水印、签名、Logo」要求。
       </div>
       <label style="display:flex;align-items:center;gap:9px;color:var(--text);cursor:pointer;margin:0 0 12px">
         <input type="checkbox" id="setCleanupInject" style="width:16px;height:16px;margin:0;accent-color:var(--accent);cursor:pointer">

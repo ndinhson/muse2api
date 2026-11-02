@@ -17,6 +17,8 @@ services:
       - MUSE2API_IMAGE_TIMEOUT=240
       - MUSE2API_VIDEO_TIMEOUT=600
       - MUSE2API_CHAT_TIMEOUT=300
+      # 参考图生图自动追加「去水印/文字/Logo」要求（0=关闭，1=开启）；默认关闭
+      - MUSE2API_IMAGE_PROMPT_CLEANUP_INJECT=${MUSE2API_IMAGE_PROMPT_CLEANUP_INJECT:-0}
     volumes:
       # 持久化账号配置、任务日志及媒体文件
       - ./data:/app/data

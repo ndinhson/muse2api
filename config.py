@@ -104,6 +104,11 @@ class Config:
     chat_timeout: int = field(default_factory=lambda: int(_env("MUSE2API_CHAT_TIMEOUT", "300")))
     max_concurrency: int = field(default_factory=lambda: max(1, int(_env("MUSE2API_CONCURRENCY", "2"))))
 
+    # 参考图生图时，是否自动在提示词末尾追加「去除参考图文字/水印/Logo」要求。
+    # 默认开启以保持旧行为；可在管理页面运行时切换，也可用环境变量改默认值。
+    image_prompt_cleanup_inject: bool = field(
+        default_factory=lambda: _env("MUSE2API_IMAGE_PROMPT_CLEANUP_INJECT", "1").strip() != "0")
+
     # 参考图输入默认只允许调用方直接提供数据和公网 URL。
     # 仅可信单用户部署可显式设为 1 恢复服务器本地文件或私网抓取。
     ref_image_local_files: bool = field(
@@ -149,6 +154,10 @@ class Config:
     @property
     def tasks_file(self) -> str:
         return os.path.join(self.data_dir, "tasks.json")
+
+    @property
+    def settings_file(self) -> str:
+        return os.path.join(self.data_dir, "settings.json")
 
     def ensure_dirs(self):
         for d in (self.base_dir, self.data_dir, self.media_dir, self.download_dir,

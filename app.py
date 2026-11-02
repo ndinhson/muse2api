@@ -535,6 +535,23 @@ def _video_references(req: VideoRequest) -> list[str]:
     return _reference_list(
         req.images, [req.reference_image, req.image_url, req.image], "images")
 
+IMAGE_CLEANUP_PROMPT = ("【纯净画面要求】：彻底清除并去除参考图中的所有文字、水印、签名、"
+                        "角标及Logo标记（clean image without any watermark, text, or logo），"
+                        "输出绝对纯净无字画面")
+
+
+def image_cleanup_inject_enabled() -> bool:
+    """参考图生图时是否自动追加「去文字/水印/Logo」要求。
+
+    优先级：管理页面运行时设置 > 环境变量默认值（CFG.image_prompt_cleanup_inject）。
+    关闭后提示词原样透传，调用方可自行在 prompt 里写所需要求。
+    """
+    v = store.get_setting("image_prompt_cleanup_inject")
+    if v is None:
+        return CFG.image_prompt_cleanup_inject
+    return bool(v)
+
+
 def build_image_prompt(r: ImageRequest) -> str:
     has_ref = bool(_image_references(r))
     if has_ref:
@@ -559,8 +576,8 @@ def build_image_prompt(r: ImageRequest) -> str:
     elif r.size:
         parts.append(f"尺寸/比例：{r.size}")
 
-    if has_ref:
-        parts.append("【纯净画面要求】：彻底清除并去除参考图中的所有文字、水印、签名、角标及Logo标记（clean image without any watermark, text, or logo），输出绝对纯净无字画面")
+    if has_ref and image_cleanup_inject_enabled():
+        parts.append(IMAGE_CLEANUP_PROMPT)
 
     if r.extra:
         parts.append(r.extra)
@@ -1651,6 +1668,33 @@ def admin_status(_=Depends(auth)):
     }
 
 
+# ------------------------- 管理：运行时设置 -------------------------
+@app.get("/admin/settings")
+def admin_get_settings(_=Depends(auth)):
+    return {
+        "settings": {
+            "image_prompt_cleanup_inject": image_cleanup_inject_enabled(),
+        },
+        "defaults": {
+            "image_prompt_cleanup_inject": CFG.image_prompt_cleanup_inject,
+        },
+        "cleanup_prompt": IMAGE_CLEANUP_PROMPT,
+    }
+
+
+@app.post("/admin/settings")
+def admin_update_settings(payload: dict = Body(default={}), _=Depends(auth)):
+    updates = {}
+    if "image_prompt_cleanup_inject" in payload:
+        updates["image_prompt_cleanup_inject"] = bool(payload["image_prompt_cleanup_inject"])
+    if not updates:
+        raise HTTPException(400, "没有可更新的设置项")
+    store.update_settings(updates)
+    return {"status": "ok", "settings": {
+        "image_prompt_cleanup_inject": image_cleanup_inject_enabled(),
+    }}
+
+
 # ------------------------- 管理：账号池 -------------------------
 @app.get("/admin/accounts")
 def list_accounts(_=Depends(auth)):
@@ -2208,7 +2252,7 @@ def get_keepalive_status(_=Depends(auth)):
 
 
 # ------------------------- 仓库实时更新检测、通知与一键在线升级 -------------------------
-REPO_URL = "https://github.com/czg86389-hub/muse2api"
+REPO_URL = "https://github.com/ndinhson/muse2api"
 TRACKED_REPO_PATHS = [
     "app.py", "engine.py", "store.py", "cdp.py", "config.py",
     "admin.html", "README.md", "version.json", "requirements.txt",
@@ -2265,9 +2309,9 @@ def _git(args: list[str], timeout: int = 30):
 
 
 def _ensure_git_repo(token: str = ""):
-    """确保 BASE_DIR 已初始化为绑定 czg86389-hub/muse2api 的 Git 仓库。"""
+    """确保 BASE_DIR 已初始化为绑定 ndinhson/muse2api 的 Git 仓库。"""
     git_dir = os.path.join(BASE_DIR, ".git")
-    remote_url = f"https://x-access-token:{token}@github.com/czg86389-hub/muse2api.git" if token else f"{REPO_URL}.git"
+    remote_url = f"https://x-access-token:{token}@github.com/ndinhson/muse2api.git" if token else f"{REPO_URL}.git"
     if not os.path.isdir(git_dir):
         _git(["init", "-b", "main"])
         _git(["remote", "add", "origin", remote_url])
@@ -2275,12 +2319,12 @@ def _ensure_git_repo(token: str = ""):
         _git(["reset", "--mixed", "origin/main"])
     else:
         _git(["remote", "set-url", "origin", remote_url])
-    _git(["config", "user.name", "czg86389-hub"])
-    _git(["config", "user.email", "czg86389-hub@users.noreply.github.com"])
+    _git(["config", "user.name", "ndinhson"])
+    _git(["config", "user.email", "ndinhson@users.noreply.github.com"])
 
 
 def _check_update_sync(force: bool = False) -> dict:
-    """检测 GitHub 官方仓库 (czg86389-hub/muse2api) 是否有新版本或新提交。
+    """检测 GitHub 官方仓库 (ndinhson/muse2api) 是否有新版本或新提交。
     默认缓存 90 秒，防止频繁刷新触发 GitHub API 速率限制。"""
     now = time.time()
     if not force and _UPDATE_CACHE["data"] and (now - _UPDATE_CACHE["ts"]) < 90:
@@ -2318,7 +2362,7 @@ def _check_update_sync(force: bool = False) -> dict:
     highlights_en = list(local_ver_obj.get("highlights_en") or [])
     try:
         rv = requests.get(
-            f"https://raw.githubusercontent.com/czg86389-hub/muse2api/main/version.json?t={int(now)}",
+            f"https://raw.githubusercontent.com/ndinhson/muse2api/main/version.json?t={int(now)}",
             timeout=6,
         )
         if rv.status_code == 200:
@@ -2340,7 +2384,7 @@ def _check_update_sync(force: bool = False) -> dict:
         if token:
             headers["Authorization"] = f"Bearer {token}"
         resp = requests.get(
-            "https://api.github.com/repos/czg86389-hub/muse2api/commits?sha=main&per_page=5",
+            "https://api.github.com/repos/ndinhson/muse2api/commits?sha=main&per_page=5",
             headers=headers,
             timeout=6,
         )
@@ -2427,7 +2471,7 @@ def _upgrade_from_github_sync() -> dict:
 
     if not upgraded_via:
         resp = requests.get(
-            "https://codeload.github.com/czg86389-hub/muse2api/tar.gz/refs/heads/main",
+            "https://codeload.github.com/ndinhson/muse2api/tar.gz/refs/heads/main",
             timeout=60,
         )
         if resp.status_code != 200:

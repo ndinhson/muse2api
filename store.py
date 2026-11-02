@@ -103,6 +103,18 @@ class Store:
             if _is_pos(ce.get("hatch_vml")):
                 a["expires_at"] = int(ce["hatch_vml"])
         self.tasks: dict[str, dict] = _read(cfg.tasks_file, {})
+        self.settings: dict = _read(cfg.settings_file, {})
+
+    # ---------- 运行时设置 ----------
+    def get_setting(self, key: str, default=None):
+        with _LOCK:
+            return self.settings.get(key, default)
+
+    def update_settings(self, updates: dict) -> dict:
+        with _LOCK:
+            self.settings.update(updates)
+            _write(self.cfg.settings_file, self.settings)
+            return dict(self.settings)
 
     # ---------- 账号 ----------
     def add_account(self, cookies: dict, label: str = "",

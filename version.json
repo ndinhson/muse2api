@@ -1,7 +1,7 @@
 {
   "version": "1.6.4",
   "updated_at": "2026-10-26",
-  "repo": "https://github.com/czg86389-hub/muse2api",
+  "repo": "https://github.com/ndinhson/muse2api",
   "highlights": [
     "修复 Chrome 扩展和独立 Cookie 助手仍强制要求 hatch_gw 的问题；现在与服务端一致，只要求核心会话令牌。",
     "修复视频遭 Muse 纯文字拒答时等待满 600 秒：稳定识别地区不可用等拒答并向调用方返回原文，长期无响应任务也会提前终止。",

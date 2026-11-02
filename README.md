@@ -286,6 +286,7 @@ curl -X POST "http://localhost:18610/v1/images/edits" \
 | `MUSE2API_IMAGE_TIMEOUT` | `240` | 生图超时上限（秒） |
 | `MUSE2API_VIDEO_TIMEOUT` | `600` | 生视频超时上限（秒） |
 | `MUSE2API_CHAT_TIMEOUT` | `300` | 对话生成超时上限（秒） |
+| `MUSE2API_IMAGE_PROMPT_CLEANUP_INJECT` | `1` | 参考图生图时是否自动追加「去除文字/水印/Logo」要求；设为 `0` 关闭。管理页面「生图提示词增强」可运行时切换，无需重启 |
 | `MUSE2API_REF_IMAGE_LOCAL_FILES` | `0` | 默认禁止读取服务器本地路径；仅可信单用户部署可显式设为 `1` 恢复 |
 | `MUSE2API_REF_IMAGE_PRIVATE_FETCH` | `0` | 默认仅允许公网 URL，并逐跳检查 DNS/重定向、固定已检查 IP、不使用环境代理；显式设为 `1` 才允许私网/本机 URL |
 

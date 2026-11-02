@@ -578,7 +578,7 @@
 
     <div class="card">
       <h3>生图提示词增强 <span class="tag">全局设置 · 立即生效</span></h3>
-      <div class="hint">
+      <div class="hint" data-i18n="image-prompt-cleanup-hint">
         默认<b>关闭</b>：带参考图的生图/编辑提示词不会自动追加任何要求，完全按调用方通过 API 传入的内容发送。
         开启后在提示词末尾自动追加「去除参考图文字、水印、签名、Logo」要求。
       </div>
@@ -871,6 +871,12 @@ const I18N_EN = {
   "自动刷新": "Auto refresh",
   "粘贴 m2a_ 开头的密钥": "Paste the key starting with m2a_",
   "保存": "Save",
+  "保存设置": "Save settings",
+  "生图提示词增强": "Image prompt enhancement",
+  "全局设置 · 立即生效": "Global setting · applies immediately",
+  "参考图生图时自动注入「纯净画面/去水印」要求": "Auto-inject the “clean image / remove watermark” requirement for reference-image generation",
+  "已开启自动注入「纯净画面」要求": "Enabled automatic “clean image” prompt injection",
+  "已关闭：提示词将完全按调用方传入内容发送": "Disabled: prompts are now sent exactly as supplied by the caller",
   "检测到 muse2api 官方仓库发布了新版本更新！": "A new muse2api version has been released in the official repository!",
   "新版本": "New version",
   "官方仓库已有新功能或性能优化提交，点击右侧按钮即可一键在线升级（自动保留本地 .env 密钥与账号池数据）。": "The official repository has new features or performance improvements. Click the button on the right to upgrade online in one step (your local .env keys and Account Pool data are kept).",
@@ -1243,6 +1249,7 @@ const I18N_EN_HTML = {
   "model-alias-hint": "\n        <b>Any model name works</b>: common names (<code>gpt-4o</code>, <code>gpt-5</code>,\n        <code>claude-sonnet-4</code>, <code>deepseek-chat</code>, <code>gemini-2.5-pro</code>, etc.)\n        are mapped to the matching capability automatically; unknown names are passed through unchanged. muse.ai routes automatically anyway,\n        so the result is the same.\n      ",
   "tool-calls-hint": "\n        <b>About the \"tool calling\" limitation (important, tested):</b><br>\n        The muse.ai web assistant has an explicit alignment policy that refuses to \"output fake tool-call JSON\". Its actual reply in testing was\n        \"I won't output 'fake tool calls' in this JSON format — I don't have a get_weather tool.\"\n        Three prompt protocols with different wording and placement were tried, and all failed.<br>\n        So: <b>autonomous agent modes</b> that depend on <code>tool_calls</code> (reading/writing files, running commands, etc.) can't be supported;\n        but all <b>Q&amp;A-style</b> usage (chat, coding, explaining, translating, summarizing, images, videos) <b>works fully</b>.<br>\n        If a client sends a <code>tools</code> field anyway, the API won't error: it ignores the tool declarations and answers as a normal chat.\n      ",
   "col-enabled": "Enabled",
+  "image-prompt-cleanup-hint": "Off by default: image generation/editing with a reference image adds no extra requirements; the prompt is sent exactly as supplied through the API. When enabled, the service appends a “remove text, watermark, signature and logo from the reference image” requirement.",
 };
 /* 含变量的文案：[正则源码, 替换串]，按顺序匹配整段文本 */
 const I18N_EN_PATTERNS = ([

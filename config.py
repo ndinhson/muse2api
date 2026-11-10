@@ -102,7 +102,7 @@ class Config:
     image_timeout: int = field(default_factory=lambda: int(_env("MUSE2API_IMAGE_TIMEOUT", "240")))
     video_timeout: int = field(default_factory=lambda: int(_env("MUSE2API_VIDEO_TIMEOUT", "600")))
     chat_timeout: int = field(default_factory=lambda: int(_env("MUSE2API_CHAT_TIMEOUT", "300")))
-    max_concurrency: int = field(default_factory=lambda: max(1, int(_env("MUSE2API_CONCURRENCY", "2"))))
+    max_concurrency: int = field(default_factory=lambda: max(1, int(_env("MUSE2API_CONCURRENCY", "8"))))
 
     # 参考图生图时，是否自动在提示词末尾追加「去除参考图文字/水印/Logo」要求。
     # 默认关闭：提示词完全由调用方传入。可在管理页面运行时切换，也可用环境变量改默认值。

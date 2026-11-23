@@ -13,6 +13,9 @@ services:
       - MUSE2API_KEY=${MUSE2API_KEY:-}
       # 服务对外基准 URL，如 https://your-domain.com（留空则管理前端自动检测当前域名）
       - MUSE2API_PUBLIC_BASE=
+      # 在线更新来源仓库（fork），避免更新后丢失本分支改动
+      - MUSE2API_REPOSITORY=${MUSE2API_REPOSITORY:-ndinhson/muse2api}
+      - MUSE2API_REPO_REF=${MUSE2API_REPO_REF:-main}
       # 超时配置（秒）
       - MUSE2API_IMAGE_TIMEOUT=240
       - MUSE2API_VIDEO_TIMEOUT=600
